@@ -1,17 +1,57 @@
 <html>
-  <head>
+
+<head>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      let socket = io();
-      let el;
+        let socket = io();
+        let el;
 
-      socket.on('time', (timeString) => {
-        el = document.getElementById('server-time');
-        el.innerHTML = 'Server time: ' + timeString;
-      });
+        socket.on('time', (timeString) => {
+            el = document.getElementById('server-time');
+            el.innerHTML = 'Server time: ' + timeString;
+        });
+
+        socket.on('messages', function(data) {
+            render(data);
+        });
+
+        function render(data) {
+            var html = data.map(function(element, index) {
+                return (`
+						<div>
+							<strong>${ element.author }</strong>
+							<em>${ element.text }</em>
+						</div>
+					`);
+            }).join(" ");
+            document.getElementById('messages').innerHTML = html;
+        }
+
+        function addMessage(e) {
+            var payload = {
+                author: document.getElementById('username').value,
+                text: document.getElementById('text').value,
+            }
+
+            socket.emit('new-message', payload);
+            return false;
+        }
     </script>
-  </head>
-  <body>
+</head>
+
+<body>
+    <h1>Test Socket</h1>
+    <div id="messages"></div>
+
+    <br>
+
+    <form onsubmit="return addMessage(this)">
+        <input type="text" id="username" placeholder="Tu nombre">
+        <input type="text" id="text" placeholder="Cuentanos algo">
+        <input type="submit" value="Enviar">
+    </form>
+
     <p id="server-time"></p>
-  </body>
+</body>
+
 </html>
