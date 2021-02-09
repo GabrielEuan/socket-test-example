@@ -11,6 +11,8 @@ var messages = [{
     text: "hola",
 }];
 
+let location = [];
+
 const server = express()
     .use((req, res) => res.sendFile(INDEX, { root: __dirname }))
     .listen(PORT, () => console.log(`Listening on ${PORT}`));
@@ -27,6 +29,23 @@ io.on('connection', (socket) => {
         messages.push(data);
         io.sockets.emit('messages', messages);
     })
+
+    socket.on('lock-item', function(data) {
+        var occuped_location = location.findIndex(x => x.area === data.area && x.date === data.date);
+        if (!occuped_location) {
+            location.push(data);
+            return "Haz ocupado la locación para la fecha solicitada";
+        } else {
+            return "La locación está siendo usada por otro usuario";
+        }
+        //io.sockets.emit('messages', messages);
+    });
+
+    socket.on('unlock-item', function(data) {
+        var index = location.findIndex(x => x.area === data.area && x.date === data.date);
+        location.splice(index, 1);
+        return "La locación fue liberada para el uso de otro usuario";
+    });
 });
 
 /* setInterval(() => io.emit('time', new Date().toTimeString()), 1000); */
