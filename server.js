@@ -11,6 +11,8 @@ var messages = [{
     text: "hola",
 }];
 
+//var colors = [ "red", "blue", "black", "white", "cyan", "pink", "yellow", "green", "gray"];
+
 let location = [];
 
 const server = express()
@@ -28,6 +30,15 @@ io.on('connection', (socket) => {
     socket.on('new-message', function(data) {
         messages.push(data);
         io.sockets.emit('messages', messages);
+    })
+
+    socket.on('change-color', function() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        io.sockets.emit('color', color);
     })
 
     socket.on('lock-item', function(data) {
