@@ -11,6 +11,8 @@ var messages = [{
     text: "hola",
 }];
 
+var defaultColor = "red";
+
 //var colors = [ "red", "blue", "black", "white", "cyan", "pink", "yellow", "green", "gray"];
 
 let location = [];
@@ -26,6 +28,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => console.log('Client disconnected'));
 
     socket.emit('messages', messages);
+    socket.emit('defaultColor', defaultColor);
 
     socket.on('new-message', function(data) {
         messages.push(data);
@@ -34,11 +37,11 @@ io.on('connection', (socket) => {
 
     socket.on('change-color', function() {
         var letters = '0123456789ABCDEF';
-        var color = '#';
+        defaultColor = '#';
         for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
+            defaultColor += letters[Math.floor(Math.random() * 16)];
         }
-        io.sockets.emit('color', color);
+        io.sockets.emit('color', defaultColor);
     })
 
     socket.on('lock-item', function(data) {

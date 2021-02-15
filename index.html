@@ -12,6 +12,11 @@
             el.innerHTML = 'Server time: ' + timeString;
         });
 
+        socket.on('defaultColor', function(color) {
+            target = document.getElementById('target');
+            target.style.background = color;
+        });
+
         socket.on('messages', function(data) {
             render(data);
         });
@@ -63,7 +68,7 @@
     </form>
 
     <form onsubmit="return changeColor(this)">
-        <div id="target" style="width:500px;height:100px;border:1px solid #000; background-color: red;">This is a rectangle!</div>
+        <div id="target" style="width:500px;height:100px;border:1px solid #000;">This is a rectangle!</div>
         <input type="submit" value="Cambiar color">
     </form>
 
